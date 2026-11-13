@@ -118,7 +118,15 @@ namespace JLUni::Shooter_N
     };
     struct Shooter
     {
-        ShooterWorkState workState{ShooterWorkState::IDLE};
+        WorkState workState{WorkState::IDLE};//当前送弹状态
+        ShooterInput input{};//外部输入
+        ShooterFeedback feedback{};//电机反馈
+        ShooterConfig config{};//参数配置
+        std::array<int16_t, 6> friction_targets{};//运行时变量
+        int16_t trigger_target_raw = 0;
+        uint32_t jam_count = 0;
+        bool friction_enabled = false;
+        bool trigger_ready = false;
 
     }
 
