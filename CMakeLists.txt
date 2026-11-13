@@ -32,7 +32,14 @@ message("Build type: " ${CMAKE_BUILD_TYPE})
 enable_language(C ASM)
 
 # Create an executable object type
+<<<<<<< HEAD
 add_executable(${CMAKE_PROJECT_NAME})
+=======
+add_executable(${CMAKE_PROJECT_NAME}
+    User/midware/src/shooter.cpp
+    User/midware/src/gimbal.cpp
+    User/midware/src/vision.cpp)
+>>>>>>> a49bf30 (初版（仅初始化libxr)
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
@@ -45,6 +52,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+<<<<<<< HEAD
         User/algo/vqf.cpp
         User/drv/bmi088.cpp
         User/drv/buzzer.cpp
@@ -60,15 +68,41 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         User/threads/vqf_thread.cpp
         User/threads/imu_calib_thread.cpp
         User/threads/roboarm_thread.cpp
+=======
+        User/algo/src/vqf.cpp
+        User/drv/src/bmi088.cpp
+        User/drv/src/buzzer.cpp
+        User/drv/src/remote_ctrl.cpp
+        User/drv/src/tof.cpp
+        User/drv/src/motor_dm.cpp
+        User/drv/src/wheel_3508.cpp
+        User/drv/src/ws2812.cpp
+        User/midware/src/chassis.cpp
+        User/threads/src/chassis_thread.cpp
+        User/threads/src/remote_ctrl_thread.cpp
+        User/threads/src/tof_thread.cpp
+        User/threads/src/vqf_thread.cpp
+        User/threads/src/imu_calib_thread.cpp
+        User/threads/src/roboarm_thread.cpp
+        User/midware/src/shooter.cpp
+        User/midware/src/vision.cpp
+>>>>>>> a49bf30 (初版（仅初始化libxr)
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+<<<<<<< HEAD
         User/algo
         User/drv
         User/midware
         User/threads
+=======
+        User/algo/inc
+        User/drv/inc
+        User/midware/inc
+        User/threads/inc
+>>>>>>> a49bf30 (初版（仅初始化libxr)
 )
 
 # Add project symbols (macros)

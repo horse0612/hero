@@ -25,6 +25,12 @@ using namespace LibXR;
 #include "chassis_thread.hpp"
 #include "remote_ctrl_thread.hpp"
 #include "tof_thread.hpp"
+<<<<<<< HEAD
+=======
+#include "gimbal_thread.hpp"
+#include "shooter_thread.hpp"
+#include "vision_thread.hpp"
+>>>>>>> a49bf30 (初版（仅初始化libxr)
 #endif
 #include "flash_map.hpp"
 #include "imu_calib_thread.hpp"
@@ -358,8 +364,18 @@ extern "C" void app_main(void)
   Thread chassis_thread;
   chassis_thread.Create(&chassis_args, ChassisThread, "chassis", 2048,
                         Thread::Priority::HIGH);
+<<<<<<< HEAD
   ws2812.SetRGB(0, 64, 0);
 #endif
+=======
+
+  Shooter_N::ShooterController shooter_controller;
+  ShooterThreadArgs shooter_args{.shooter = shooter_controller};
+  Thread shooter_thread;
+  shooter_thread.Create(&shooter_args, OS_ShooterCallback, "shooter", 512, Thread::Priority::HIGH);
+
+  #endif
+>>>>>>> a49bf30 (初版（仅初始化libxr)
   while (true) {
     Thread::Sleep(UINT32_MAX);
   }
