@@ -1,21 +1,6 @@
 /*
-#pragma once
 
-#include <cstdint>
-#include "JLU_HERO\Math\inc\Slope.hpp"
-#include "JLU_HERO\UserMiddlewares\inc\Moto_ctr.hpp"
-#define Trig_Start_Angle 1.26282001f//-0.09f
-#ifndef TRIG_MOTOR_MODE
-#define TRIG_MOTOR_MODE 1 //0:侧切拨盘 1：中供拨盘 改变的是校准方式
-#endif
 
-enum ShooterWorkState : std::uint8_t
-{
-    IDLE = 0,
-    LOAD,
-    TRIGGER,
-    TRIGGER_REVERSE
-};
 
 struct Shooter
 {
@@ -69,6 +54,7 @@ void OS_ShooterCallback(void const *argument);
 #include "remote_ctrl.hpp"
 #include "slope.hpp"
 #include "can.hpp"
+#include "Moto_ctr.hpp"
 
 #define Trig_Start_Angle 1.26282001f//-0.09f
 #ifndef TRIG_MOTOR_MODE
@@ -118,7 +104,15 @@ namespace JLUni::Shooter_N
     };
     struct Shooter
     {
-        ShooterWorkState workState{ShooterWorkState::IDLE};
+        WorkState workState{WorkState::IDLE};//当前送弹状态
+        ShooterInput input{};//外部输入
+        ShooterFeedback feedback{};//电机反馈
+        ShooterConfig config{};//参数配置
+        std::array<int16_t, 6> friction_targets{};//运行时变量
+        int16_t trigger_target_raw = 0;
+        uint32_t jam_count = 0;
+        bool friction_enabled = false;
+        bool trigger_ready = false;
 
     }
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "shooter.hpp"
+
 namespace JLUni
 {
     struct ShooterThreadArgs
