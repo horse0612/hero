@@ -1,9 +1,9 @@
 #pragma once
 #include <cstdint>
-#include "JLU_HERO/Math/inc/PID.hpp"
-#include "CAN_DJI.hpp"
-#include "CAN_DM.hpp"
-#include "CAN_LK.hpp"
+#include "advanced_pid.hpp"
+//#include "CAN_DJI.hpp"
+//#include "CAN_DM.hpp"
+//#include "CAN_LK.hpp"
 
 constexpr std::int32_t MOTOR_M3508_DGR2CODE(const float degree)
 {

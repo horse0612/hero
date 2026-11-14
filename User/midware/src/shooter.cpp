@@ -93,7 +93,7 @@ namespace JLUni::Shooter_N
         Slope_SetTarget(&shooter.fricSlope, 0.0f);
         shooter.fricOpenFlag = false;
         shooter.workState = IDLE;
-        shooter.block.judgeCnt = 0U;
+        shooter.judgeCnt = 0U;
         vision_delay_time = 0;
         last_shoot_mode = IDLE;
         Shooter_InitPID();
