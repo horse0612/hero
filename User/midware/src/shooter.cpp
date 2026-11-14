@@ -21,11 +21,11 @@ extern "C"
 }
 namespace
 {
-    if (TRIG_MOTOR_MODE == 0)//选择不同的拨盘, 0:侧切拨盘 1：中供拨盘
+    #if (TRIG_MOTOR_MODE == 0)//选择不同的拨盘, 0:侧切拨盘 1：中供拨盘
     {
         constexpr float kTriggerStep = kPi / 3.0f;
     }
-    else if (TRIG_MOTOR_MODE == 1)
+    #elif (TRIG_MOTOR_MODE == 1)
     {
         constexpr float kTriggerStep = kPi / 4.0f;
         constexpr float kTriggerOffset = - 4.04f;//测出来校准后的其中一个槽位
@@ -42,6 +42,7 @@ namespace
             kPi * 5.0f / 4.0f - kTriggerOffset
         };
     }
+    #endif
 
     int cont_for_test = 0;
     int last_shoot_mode = IDLE;
