@@ -6,7 +6,7 @@ namespace JLUni
 {
     struct ShooterThreadArgs
     {
-        Shooter& shooter;
+        Shooter_N::Shooter& shooter;
     };
     void OS_ShooterCallback(ShooterThreadArgs* const args);
 }

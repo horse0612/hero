@@ -3,13 +3,11 @@
 #include <cmath>
 #include <cstdint>
 
-//#include "Judge.hpp"
 #include "remote_ctrl.hpp"
 #include "gimbal.hpp"
-#include "Vision.hpp"
+#include "vision.hpp"
 #include "User_CAN.hpp"
 #include "libxr.hpp"
-#include "detect.hpp"
 
 #include "advanced_pid.hpp"
 
@@ -19,58 +17,11 @@ extern "C"
 #include "app_main.h"
 #include "fdcan.h"
 }
-namespace
-{
-    #if (TRIG_MOTOR_MODE == 0)//选择不同的拨盘, 0:侧切拨盘 1：中供拨盘
-    {
-        constexpr float kTriggerStep = kPi / 3.0f;
-    }
-    #elif (TRIG_MOTOR_MODE == 1)
-    {
-        constexpr float kTriggerStep = kPi / 4.0f;
-        constexpr float kTriggerOffset = - 4.04f;//测出来校准后的其中一个槽位
-        //后面有新的结构，应该是用输出力矩的突变来校准，这个暂时不需要
-        constexpr float kTriggerStarts[8] = 
-        {
-            -kPi * 2.0f / 4.0f - kTriggerOffset,
-            -kPi * 1.0f / 4.0f - kTriggerOffset,
-            -kTriggerOffset,
-            kPi * 1.0f / 4.0f - kTriggerOffset,
-            kPi * 2.0f / 4.0f - kTriggerOffset,
-            kPi * 3.0f / 4.0f - kTriggerOffset,
-            kPi * 4.0f / 4.0f - kTriggerOffset,
-            kPi * 5.0f / 4.0f - kTriggerOffset
-        };
-    }
-    #endif
 
-    int cont_for_test = 0;
-    int last_shoot_mode = IDLE;
-    bool trig_flag_ready = false;
-    int vision_delay_time = 0;
-    bool trig_calibration_flag = false;
-
-    inline void SetFrictionTargets(const float speed, const std::int16_t offset, DJImotor (&motors)[6])
-    {
-        motors[0].targetSpeed = (-speed);
-        motors[1].targetSpeed = (speed);
-        motors[2].targetSpeed = (-speed);
-        motors[3].targetSpeed = (-(speed - (offset)));
-        motors[4].targetSpeed = (  speed - (offset));
-        motors[5].targetSpeed = (-(speed - (offset)));
-    }
-}
-extern "C"
-{
-Shooter shooter{};
-}
-
+JLUni::Shooter_N shooter{};
 
 namespace JLUni::Shooter_N
 {
-        extern "C"
-    {
-
     void Shooter_InitPID(void)
     {
         for (auto &motor : shooter.fricMotor)
@@ -87,8 +38,6 @@ namespace JLUni::Shooter_N
     void Shooter_Init(void)
     {
         shooter.rockerCtrl = false;
-        shooter.fricSpd1 = 3500;
-        shooter.fric_offset1 = 650;
         Slope_Init(&shooter.fricSlope, 10.0f, 0.0f);
         Slope_SetTarget(&shooter.fricSlope, 0.0f);
         shooter.fricOpenFlag = false;
@@ -122,7 +71,7 @@ namespace JLUni::Shooter_N
             }
         }
         float correction = std::remainder(kTriggerStarts[best_start] - shooter.dm4310_trig.pos * Trig_Moto2Gear, (2.0f * kPi))* Trig_Gear2Moto;
-        // 拨盘角度误差换算为电机轴角度误差
+        //拨盘角度误差换算为电机轴角度误差
         return correction ;
     }
     #endif
@@ -140,6 +89,16 @@ namespace JLUni::Shooter_N
 
     }
 
+    void SetFrictionTargets(const float speed, const std::int16_t offset, DJImotor (&motors)[6])
+    {
+        motors[0].targetSpeed = (-speed);
+        motors[1].targetSpeed = (speed);
+        motors[2].targetSpeed = (-speed);
+        motors[3].targetSpeed = (-(speed - (offset)));
+        motors[4].targetSpeed = (  speed - (offset));
+        motors[5].targetSpeed = (-(speed - (offset)));
+    }
+    
     void Shooter_RockerCtrl(void)
     {
         if (rcInfo.right == 1)
@@ -155,16 +114,13 @@ namespace JLUni::Shooter_N
 
         Slope_NextVal(&shooter.fricSlope);
         SetFrictionTargets(Slope_GetVal(&shooter.fricSlope), shooter.fric_offset1, shooter.fricMotor);
-        cont_for_test++;
         if (rcInfo.left == 1 && !trig_flag_ready && shooter.fricOpenFlag)
         {
-            cont_for_test = 0;
             trig_flag_ready = true;
             shooter.workState = TRIGGER;
         }
         else if (rcInfo.left != 1)
         {
-            cont_for_test = 0;
             trig_flag_ready = false;
         }
     }
@@ -201,7 +157,6 @@ namespace JLUni::Shooter_N
         if (fabs(shooter.dm4310_trig.vel) <= 1.5f * Trig_Gear2Moto && fabs(shooter.dm4310_trig.total_target_pos - shooter.dm4310_trig.totalangle) >= kTriggerStep && last_shoot_mode!= TRIGGER_REVERSE)
         {
             shooter.block.judgeCnt++;
-            cont_for_test = 0;
             if (shooter.block.judgeCnt >= 150)
             {
                 shooter.block.judgeCnt = 0;
@@ -269,5 +224,4 @@ namespace JLUni::Shooter_N
         }
     }
 
-    }
 }
